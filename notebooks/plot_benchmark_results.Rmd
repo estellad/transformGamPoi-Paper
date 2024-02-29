@@ -48,6 +48,12 @@ print(paste0(sum(res$cputime_sec) / (60 * 60 * 24 * 365), " years total compute 
 
 Make the main benchmark overview panels
 ```{r}
+transfamlabel_df <- as.data.frame(trans_families_labels)
+transfamlabel_df$trans_families_labels <- paste0("~!", transfamlabel_df$trans_families_labels)
+transfamlabel_df$family <- rownames(transfamlabel_df)
+trans_families <-trans_families %>%
+  left_join(transfamlabel_df)
+
 res_main <- res %>%
   filter(alpha %in% c("TRUE", "FALSE")) %>%
   tidylog::inner_join(parameter_choices)  %>%
@@ -69,32 +75,35 @@ make_main_plot_panel <- function(data, add_group_label = FALSE){
     theme_grouped_axis(axis.grouping.line_padding = unit(5, "pt"), axis.grouping.line_height = unit(10, "pt"), axis.grouping.label.y = element_text(size = font_size_small, angle = 90)) +
     theme(axis.title.y = element_blank(),  plot.title.position = "plot")
 }
+```
 
+
+```{r}
 consistency_pl <- res_main %>%
   filter(benchmark == "consistency") %>%
-  make_main_plot_panel(add_group_label = TRUE) +
-  labs(x = "Relative $k$-NN Overlap", 
+  make_main_plot_panel(add_group_label = TRUE) + 
+  labs(x = "Relative $k$-NN Overlap",
        subtitle = "10X gene subset 1 vs. gene subset 2") +
   NULL
 
-simulation_pl <- res_main %>%
-  filter(benchmark == "simulation") %>%
-  make_main_plot_panel(add_group_label = FALSE) +
-  labs(x = "Relative $k$-NN Overlap", 
-       subtitle = "Ground truth vs. simulated counts") +
-  NULL
-
-
-downsampling_pl <- res_main %>%
-  filter(benchmark == "downsampling") %>%
-  make_main_plot_panel(add_group_label = FALSE) +
-  labs(x = "Relative $k$-NN Overlap", 
-       subtitle = "Original vs. downsampled deep-seq data") +
-  NULL
+# simulation_pl <- res_main %>%
+#   filter(benchmark == "simulation") %>%
+#   make_main_plot_panel(add_group_label = FALSE) +
+#   labs(x = "Relative $k$-NN Overlap", 
+#        subtitle = "Ground truth vs. simulated counts") +
+#   NULL
+# 
+# 
+# downsampling_pl <- res_main %>%
+#   filter(benchmark == "downsampling") %>%
+#   make_main_plot_panel(add_group_label = FALSE) +
+#   labs(x = "Relative $k$-NN Overlap", 
+#        subtitle = "Original vs. downsampled deep-seq data") +
+#   NULL
 
 consistency_pl
-simulation_pl
-downsampling_pl
+# simulation_pl
+# downsampling_pl
 ```
 
 

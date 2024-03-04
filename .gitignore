@@ -1,6 +1,7 @@
 extra_data/*
 !extra_data/README.md
 
+.DS_Store
 
 # History files
 .Rhistory
